@@ -1,6 +1,7 @@
 // import Vue from 'vue';
 import { createRouter, createWebHashHistory } from "vue-router";
 import Home from '../views/Home.vue'
+import Index from '../views/Index.vue'
 // import Login from '../views/Login.vue'
 
 
@@ -9,6 +10,11 @@ let routes = [
         path:'/home',             
         name: 'Home',
 		component: Home,       
+    },        
+    {             
+        path:'/index',             
+        name: 'Index',
+		component: Index,      
     },        
     {             
         path:'/login',             

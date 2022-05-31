@@ -1,15 +1,18 @@
 <template>
-    <el-row type="flex" class="row-bg" justify="center">
-        <el-col :xl="6" :lg="7">
-            <h2>欢迎来到VueAdmin管理系统</h2>
-            <el-image :src="require('@/assets/MarkerHub.jpg')" style="height: 180px; width: 180px;"></el-image>
-            <p>公众号 MarkerHub</p>
+	<el-row type="flex" class="row-bg" justify="center">
+		<el-col :xl="6" :lg="7">
+			<h2>欢迎来到VueAdmin管理系统</h2>
+			<el-image :src="require('@/assets/MarkerHub.jpg')" style="height: 180px; width: 180px;"></el-image>
+
+			<p>公众号 MarkerHub</p>
 			<p>扫码二维码，回复【 VueAdmin 】获取登录密码</p>
-        </el-col>
-        <el-col :span="1">
+
+		</el-col>
+
+		<el-col :span="1">
 			<el-divider direction="vertical"></el-divider>
 		</el-col>
-        <el-col :xl="6" :lg="7">
+		<el-col :xl="6" :lg="7">
 			<el-form :model="loginForm" :rules="rules" ref="loginForm" label-width="80px">
 				<el-form-item label="用户名" prop="username" style="width: 380px;">
 					<el-input v-model="loginForm.username"></el-input>
@@ -28,7 +31,8 @@
 				</el-form-item>
 			</el-form>
 		</el-col>
-    </el-row>
+	</el-row>
+
 </template>
  
 <script>
@@ -38,9 +42,9 @@
         data(){
             return{
                 loginForm: {
-					username: 'admin',
-					password: '111111',
-					code: '11111',
+					username: '',
+					password: '',
+					code: '',
 					token: ''
 				},
                 rules: {
@@ -59,10 +63,40 @@
             }
         },
         methods:{
+            submitForm(formName){
+                this.$refs[formName].validate((valid)=>{
+                    if (valid) {
+                        this.$axios.post('/login',this.loginForm).then(res => {
+                            console.log(res)
+							const jwt = res.header['Authorization']
+							this.$store.commit('SET_TOKEN',jwt)
+							console.log('daozheli')
+							this.$router.push('/home')
+                        })
+                    } else {
+                        console.log('error submit!!')
+                        return false
+                    }
+                });
+            },
             resetForm(formName) {
 				this.$refs[formName].resetFields();
 			},
-        }
+            getCaptcha(){
+                this.$axios.get('/captcha',this.loginForm).then(res => {
+                    console.log(res)
+                    this.loginForm.token = res.data.data.token
+                    this.captchaImg = res.data.data.captchaImg
+					this.loginForm.code = ''
+                })
+            }
+        },
+		created() {
+			this.getCaptcha()
+		},
+		beforeCreate(){
+			console.log('ios')
+		}
     }
 </script>
  
